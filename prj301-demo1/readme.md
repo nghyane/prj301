@@ -11,18 +11,18 @@ catalina start
 
 ## Screenshort
 
-![image](screenshorts/1.png)
+![image](screenshorts/1.jpeg)
 
-![image](screenshorts/2.png)
+![image](screenshorts/2.jpeg)
 
-![image](screenshorts/3.png)
+![image](screenshorts/3.jpeg)
 
-![image](screenshorts/4.png)
+![image](screenshorts/4.jpeg)
 
-![image](screenshorts/5.png)
+![image](screenshorts/5.jpeg)
 
-![image](screenshorts/6.png)
+![image](screenshorts/6.jpeg)
 
-![image](screenshorts/7.png)
+![image](screenshorts/7.jpeg)
 
 
