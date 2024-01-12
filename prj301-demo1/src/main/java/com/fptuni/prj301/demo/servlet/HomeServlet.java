@@ -18,6 +18,10 @@ import javax.servlet.http.HttpServletResponse;
 
 public class HomeServlet extends HttpServlet {
 
+    // define USER_NAME
+    private final String USER_NAME = "admin";
+    private final String PASSWORD = "123";
+
     @Override
     public void init() throws ServletException {
         super.init(); //To change body of generated methods, choose Tools | Templates.
@@ -40,16 +44,25 @@ public class HomeServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        response.setContentType("image/appliction;charset=UTF-8");
+        
+        response.setContentType( "text/html;charset=UTF-8" );
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("4343");
             out.println("<html>");
             out.println("<head>");
             out.println("<title>Servlet HomeServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet HomeServlet at " + request.getContextPath() + "</h1>");
+
+            String username = request.getParameter("user");
+            String password = request.getParameter("password");
+
+            if(username.equals(USER_NAME) && password.equals(PASSWORD)){
+                out.println("Vaid");
+            } else {
+                out.println("Not Vaid");
+            }
+
+
             out.println("</body>");
             out.println("</html>");
         }
