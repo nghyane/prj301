@@ -2,14 +2,17 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package com.fptuni.prj301.demo.servlet;
+package prj301demo.servlet;
 
-import com.fptuni.prj301.demo.utils.DBUtils;
+import prj301demo.utils.DBUtils;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -43,38 +46,69 @@ public class StudentListServlet extends HttpServlet {
             out.println("<body>");
             out.println("<h1>Student List </h1>");
             
-            out.println("<form action=''><input name=keyword type=text><input name=submit type=submit></form>");
-            
-            
-            out.println("<table>");
-            out.println("<tr><th>ID</th><th><a href='?sortCol=firstname'>First Name</a></th><th><a href='?sortCol=lastname'>Last Name</a></th></tr>");
-            
-            String sortCol = request.getParameter("sortCol");
             String keyword = request.getParameter("keyword");
             
-            String sql = "select id, firstname , lastname from student ";
+            if (keyword == null) keyword = "";
+            String sortCol = request.getParameter("colSort");
             
-            if (sortCol != null){
-                sql += " order by " +sortCol;
-            }
+            out.print(  "    <form action='' method=GET>\n" +
+                        "        <input name=keyword type=text value='"+keyword +"'>\n" +
+                        "        <input type=submit value=Search >\n" +
+                        "    </form>");
             
-            if (keyword != null){
-                sql += " where " +sortCol; //
-            }
             
+            out.print("<table>");
+            out.println("<tr><td>Id</td>");
+                        out.println("<td><a href=?colSort=firstname>First Name</a></td>");
+                        out.println("<td><a href=?colSort=lastname>Last Name</a></td>");
+                        out.println("<td>Age</td></tr>");
             try {
-                Connection conn = DBUtils.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery();
-                while (rs.next()) {
-                   out.print("<tr><td>" + rs.getString("id") + "</td> " 
-                            + "<td>" + rs.getString("firstname") + "</td> " 
-                            + "<td>" + rs.getString("lastname") + "</td> </tr>"     );
+
+                Connection con = DBUtils.getConnection();            
+                String sql = " SELECT id, firstname, lastname, age FROM student ";
+
+                if (keyword != null && !keyword.isEmpty()){
+                    sql += " WHERE firstname like ? OR lastname like ? ";
                 }
 
-            } catch (Exception e) {
-                System.out.println(e);
+                if (sortCol != null && !sortCol.isEmpty()){
+                    sql += " ORDER BY " + sortCol + " ASC ";
+                }
+
+                
+                PreparedStatement stmt = con.prepareStatement(sql);
+                
+                if (keyword != null && !keyword.isEmpty()){
+                    stmt.setString(1, "%" + keyword + "%");
+                    stmt.setString(2, "%" + keyword + "%");
+                }
+                
+                ResultSet rs = stmt.executeQuery();
+                
+                if (rs != null){
+                    while (rs.next()){
+                        
+                        int id = rs.getInt("id");
+                        String firstname = rs.getString("firstname");
+                        String lastname = rs.getString("lastname");
+                        int age = rs.getInt("age");
+                        
+                        out.println("<tr><td>" + id + "</td>");
+                        out.println("<td>" + firstname + "</td>");
+                        out.println("<td>" + lastname + "</td>");
+                        out.println("<td>" + age + "</td></tr>");
+                        
+                    }
+                }
+                con.close();
+            } catch (SQLException ex) {                
+                System.out.println("Error in servlet. Details:" + ex.getMessage());
+                ex.printStackTrace();
+                
             }
+           
+
+        
             out.println("</table>");
             out.println("</body>");
             out.println("</html>");
